@@ -1,25 +1,17 @@
 ---
 # defaults file for nomad
 
-# Set this to "yes" for a server.
-nomad_server: yes
+# Configuration items for Nomad
+nomad_data_dir: /opt/nomad/data
+nomad_bind_addr: 0.0.0.0
+nomad_log_level: INFO
+nomad_datacenter: dc1
 
-# Configuration items for the Nomad server
-nomad_server_data_dir: /tmp/server
-nomad_server_bind_addr: 0.0.0.0
-nomad_server_log_level: INFO
+# This this to "yes" for an agent.
+nomad_agent: yes
+
+# Set this to "yes" for a server.
+nomad_server: no
 
 # How many servers and agents are expected?
 nomad_server_bootstrap_expect: 1
-
-# This this to "yes" for an agent.
-nomad_agent: no
-
-# Configuration items for the Nomad agent
-nomad_agent_log_level: INFO
-nomad_agent_data_dir: /tmp/agent
-nomad_agent_name: "{{ inventory_hostname }}"
-
-nomad_agent_servers:
-  - name: 127.0.0.1
-    port: 4647
