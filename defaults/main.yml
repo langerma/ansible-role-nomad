@@ -1,17 +1,24 @@
 ---
 # defaults file for nomad
 
-# Configuration items for Nomad
-nomad_data_dir: /opt/nomad/data
-nomad_bind_addr: 0.0.0.0
-nomad_log_level: INFO
+# Set Consul Server address to advertise nomad server/agent
+consul_addr: 127.0.0.1
+
+# Configuration generaö items for the Nomad
+nomad_region: global
 nomad_datacenter: dc1
-
-# This this to "yes" for an agent.
-nomad_agent: yes
-
-# Set this to "yes" for a server.
-nomad_server: no
+nomad_node_class: worker
+nomad_data_dir: /tmp/nomad
+nomad_bind_addr: 0.0.0.0
+nomad_advertise_addr: "{{ ansible_default_ipv4.address }}"
+nomad_log_level: INFO
+nomad_name: "{{ inventory_hostname }}"
 
 # How many servers and agents are expected?
 nomad_server_bootstrap_expect: 1
+
+# Set this to "yes" for a server.
+nomad_server: yes
+
+# This this to "yes" for an agent.
+nomad_agent: yes

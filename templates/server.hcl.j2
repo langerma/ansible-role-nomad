@@ -1,0 +1,20 @@
+{{ ansible_managed | comment }}
+
+server {
+    enabled = true
+    bootstrap_expect = {{ nomad_server_bootstrap_expect }}
+
+    rejoin_after_leave = true
+
+    enabled_schedulers = ["service","batch","system"]
+    num_schedulers = 4
+
+    node_gc_threshold = "24h"
+    eval_gc_threshold = "1h"
+    job_gc_threshold = "4h"
+    deployment_gc_threshold = "1h"
+
+    encrypt = ""
+
+    raft_protocol = 2
+}

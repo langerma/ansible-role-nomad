@@ -7,6 +7,13 @@
       - nomad_server is boolean
     quiet: yes
 
+- name: test if consul_addr is set correctly
+  ansible.builtin.assert:
+    that:
+      - consul_addr is defined
+      - consul_addr is string
+    quiet: yes
+
 - name: test if nomad_bind_addr is set correctly
   ansible.builtin.assert:
     that:
@@ -35,6 +42,14 @@
   when:
     - nomad_server | bool
 
+- name: test if nomad_advertise_addr is set correctly
+  ansible.builtin.assert:
+    that:
+      - nomad_advertise_addr is defined
+      - nomad_advertise_addr is string
+    quiet: yes
+  when:
+    - nomad_server | bool
 - name: test if nomad_server_bootstrap_expect is set correctly
   ansible.builtin.assert:
     that:
@@ -59,3 +74,35 @@
       - nomad_agent is defined
       - nomad_agent is boolean
     quiet: yes
+
+#- name: test if nomad_agent_servers is set correctly
+#  ansible.builtin.assert:
+#    that:
+#      - nomad_agent_servers is defined
+#      - nomad_agent_servers is iterable
+#    quiet: yes
+#  when:
+#    - nomad_agent | bool
+
+#- name: test if item in nomad_agent_servers is set correctly
+#  ansible.builtin.assert:
+#    that:
+#      - item.name is defined
+#      - item.name is string
+#      - item.port is defined
+#      - item.port is number
+#      - item.port > 0
+#      - item.port < 65536
+#    quiet: yes
+#  loop: "{{ nomad_agent_servers }}"
+#  loop_control:
+#    label: "{{ item.name }}"
+#  when:
+#    - nomad_agent | bool
+
+#- name: test if nomad_server and nomad_agent are set correctly
+#  ansible.builtin.assert:
+#    that:
+#      - nomad_server != nomad_agent
+#    fail_msg: "Either nomad_server or nomad_agent can be enabled."
+#    quiet: yes
