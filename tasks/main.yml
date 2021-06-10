@@ -18,7 +18,7 @@
   ansible.builtin.find:
     paths: /etc/nomad.d
     file_type: file
-    excludes: 
+    excludes:
       - "base.hcl"
       - "client.hcl"
       - "server.hcl"
@@ -31,7 +31,7 @@
     state: absent
   with_items: "{{ unwanted_files['files'] }}"
 
-- name: copy nomad environment file 
+- name: copy nomad environment file
   ansible.builtin.template:
     src: nomad.env.j2
     dest: /etc/nomad.d/nomad.env
@@ -41,7 +41,7 @@
   notify:
     - restart nomad
 
-- name: configure genaral nomad options 
+- name: configure genaral nomad options
   ansible.builtin.template:
     src: base.hcl.j2
     dest: /etc/nomad.d/base.hcl
@@ -100,6 +100,3 @@
   ansible.builtin.command:
     cmd: nomad server join {{ nomad_leader }}:4648
   register: nomad_join_nomad_leader
-  #when:
-    #- ansible_hostname != nomad_server
-    #- ansible_hostname not in nomad_list_server_members.stdout
