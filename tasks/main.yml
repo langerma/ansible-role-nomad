@@ -101,4 +101,3 @@
     cmd: nomad server join {{ nomad_leader }}:4648
   register: nomad_join_nomad_leader
   changed_when: false
-  
