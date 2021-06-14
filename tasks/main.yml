@@ -19,10 +19,10 @@
     paths: /etc/nomad.d
     file_type: file
     excludes:
-      - "base.hcl"
-      - "client.hcl"
-      - "server.hcl"
-      - "nomad.env"
+      - base.hcl
+      - client.hcl
+      - server.hcl
+      - nomad.env
   register: unwanted_files
 
 - name: delete unwanted files
@@ -30,6 +30,20 @@
     path: "{{ item.path }}"
     state: absent
   with_items: "{{ unwanted_files['files'] }}"
+
+- name: delete server config if it is not defined
+  ansible.builtin.file:
+    path: /etc/nomad.d/server.hcl
+    state: absent
+  when:
+    - not nomad_server
+
+- name: delete client config if it is not defined
+  ansible.builtin.file:
+    path: /etc/nomad.d/client.hcl
+    state: absent
+  when:
+    - not nomad_client
 
 - name: copy nomad environment file
   ansible.builtin.template:
@@ -95,9 +109,3 @@
   changed_when: no
   when:
     - nomad_server | bool
-
-- name: join nomad leader
-  ansible.builtin.command:
-    cmd: nomad server join {{ nomad_leader }}:4648
-  register: nomad_join_nomad_leader
-  changed_when: false

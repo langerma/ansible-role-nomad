@@ -29,30 +29,12 @@ telemetry {
     publish_node_metrics = true
 }
 
-consul {
-    # The address to the Consul agent.
-    address = "{{ consul_addr }}:8500"
-    token = ""
-    # The service name to register the server and client with Consul.
-    server_service_name = "nomad-servers"
-    client_service_name = "nomad-clients"
-    tags = {}
-
-    # Enables automatically registering the services.
-    auto_advertise = true
-
-    # Enabling the server and client to bootstrap using Consul.
-    server_auto_join = true
-    client_auto_join = true
-}
-
 log_level = "{{ nomad_log_level }}"
 data_dir  = "{{ nomad_data_dir }}"
 enable_syslog = true
 
 leave_on_terminate = true
 leave_on_interrupt = false
-
 
 acl {
     enabled = false

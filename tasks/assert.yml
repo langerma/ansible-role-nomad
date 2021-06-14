@@ -7,13 +7,6 @@
       - nomad_server is boolean
     quiet: yes
 
-- name: test if consul_addr is set correctly
-  ansible.builtin.assert:
-    that:
-      - consul_addr is defined
-      - consul_addr is string
-    quiet: yes
-
 - name: test if nomad_bind_addr is set correctly
   ansible.builtin.assert:
     that:
