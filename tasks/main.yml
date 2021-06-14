@@ -43,7 +43,7 @@
     path: /etc/nomad.d/client.hcl
     state: absent
   when:
-    - not nomad_client
+    - not nomad_agent
 
 - name: copy nomad environment file
   ansible.builtin.template:
