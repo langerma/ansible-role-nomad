@@ -48,7 +48,7 @@
     - not nomad_client
   notify:
     - restart nomad
-  
+
 - name: copy nomad environment file
   ansible.builtin.template:
     src: nomad.env.j2
