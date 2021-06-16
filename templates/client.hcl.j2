@@ -1,18 +1,10 @@
 {{ ansible_managed | comment }}
 
-# Enable the client
-
 client {
   enabled = true
   node_class = "{{ nomad_node_class }}"
-  no_host_uuid = true
-  
+  no_host_uuid = true  
   max_kill_timeout = "30s"
-  
-  # implement metadata
-  #meta = {
-  #  "worker" = "pine"
-  #}
 }
 
 plugin "docker" {

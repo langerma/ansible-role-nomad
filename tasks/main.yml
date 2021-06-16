@@ -98,18 +98,3 @@
     name: nomad
     state: started
     enabled: yes
-
-- name: determine nomad leader
-  ansible.builtin.set_fact:
-    nomad_leader: "{{ nomad_advertise_addr }}"
-  run_once: yes
-  when:
-    - nomad_server | bool
-
-- name: list server members
-  ansible.builtin.command:
-    cmd: nomad server members
-  register: nomad_list_server_members
-  changed_when: no
-  when:
-    - nomad_server | bool
