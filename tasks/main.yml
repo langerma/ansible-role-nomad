@@ -37,14 +37,18 @@
     state: absent
   when:
     - not nomad_server
+  notify:
+    - restart nomad
 
 - name: delete client config if it is not defined
   ansible.builtin.file:
     path: /etc/nomad.d/client.hcl
     state: absent
   when:
-    - not nomad_agent
-
+    - not nomad_client
+  notify:
+    - restart nomad
+  
 - name: copy nomad environment file
   ansible.builtin.template:
     src: nomad.env.j2
@@ -87,7 +91,7 @@
   notify:
     - restart nomad
   when:
-    - nomad_agent | bool
+    - nomad_client | bool
 
 - name: start nomad
   ansible.builtin.service:

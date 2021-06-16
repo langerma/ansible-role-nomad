@@ -62,7 +62,7 @@ nomad_server_bootstrap_expect: 1
 nomad_server: no
 
 # This this to "yes" for an agent.
-nomad_agent: yes
+nomad_client: yes
 ```
 
 ## [Requirements](#requirements)
