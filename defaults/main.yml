@@ -10,6 +10,9 @@ nomad_advertise_addr: "{{ ansible_default_ipv4.address }}"
 nomad_log_level: INFO
 nomad_name: "{{ inventory_hostname_short }}"
 nomad_server_bootstrap_expect: 1
+nomad_config_path: /etc/nomad.d
+nomad_bootstrap_state_info_path: "{{ nomad_config_path }}/.nomad_bootstrap_info"
+nomad_enable_acl: no
 
 nomad_server: no
 nomad_client: yes

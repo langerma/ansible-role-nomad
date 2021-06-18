@@ -34,3 +34,11 @@ enable_syslog = true
 
 leave_on_terminate = true
 leave_on_interrupt = false
+
+{% if nomad_enable_acl is defined and nomad_enable_acl is sameas true %}
+acl {
+    enabled = true
+    token_ttl = "30s"
+    policy_ttl = "30s"
+}
+{% endif %}
