@@ -1,0 +1,81 @@
+---
+- name: Read ACL bootstrap state
+  stat:
+    path: "{{ nomad_bootstrap_state_info_path }}"
+  register: bootstrap_state
+  ignore_errors: true
+  tags: always
+
+- block:
+    - block:
+        - name: Check if ACL bootstrap token data is present on file on previously boostrapped server
+          slurp:
+            src: "{{ nomad_bootstrap_state_info_path }}"
+          register: nomad_bootstrap_state_info_b64
+          ignore_errors: true
+
+        - name: Deserialize data
+          set_fact:
+            nomad_bootstrap_state_info: "{{ nomad_bootstrap_state_info_b64.content | b64decode }}"
+          when: nomad_bootstrap_state_info_b64.content is defined
+
+      when:
+        - nomad_bootstrap_state_info is not defined
+        - bootstrap_state.stat.exists | bool
+
+    - name: Write ACL bootstrap info locally for use with new servers
+      copy:
+        content: "{{ nomad_bootstrap_state_info }}"
+        dest: '/tmp/nomad_bootstrap_state_info'
+        mode: 0600
+      become: false
+      vars:
+        ansible_become: false
+      delegate_to: localhost
+      changed_when: false
+      when: nomad_bootstrap_state_info is defined
+    
+    # Bootstrap if no info is found
+    - block:
+        - name: Run bootstrap
+          shell: "nomad acl bootstrap"
+          register: nomad_bootstrap_output
+
+        - name: Write output locally to share with other nodes
+          copy:
+            content: "{{ nomad_bootstrap_output.stdout }}"
+            dest: '/tmp/nomad_bootstrap_state_info'
+          become: false
+          vars:
+            ansible_become: false
+          delegate_to: localhost
+
+      run_once: true
+      when:
+        - lookup('first_found', dict(files=['/tmp/nomad_bootstrap_state_info'], skip=true)) | ternary(false, true)
+        - not bootstrap_state.stat.exists | bool
+
+    - name: Read bootstrap info for servers that require it
+      set_fact:
+        nomad_bootstrap_output: "{{ lookup('file', '/tmp/nomad_bootstrap_state_info') }}"
+      when:
+        - nomad_bootstrap_output is not defined
+
+    - name: Write to node
+      copy:
+        src: "/tmp/nomad_bootstrap_state_info"
+        dest: "{{ nomad_bootstrap_state_info_path }}"
+
+    - name: Delete local store
+      file:
+        path: '/tmp/nomad_bootstrap_state_info'
+        state: absent
+      become: false
+      vars:
+        ansible_become: false
+      run_once: true
+      delegate_to: localhost
+      changed_when: false
+  when:
+    - nomad_server | bool
+    - nomad_enable_acl | bool
