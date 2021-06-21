@@ -34,7 +34,7 @@
       delegate_to: localhost
       changed_when: false
       when: nomad_bootstrap_state_info is defined
-    
+
     # Bootstrap if no info is found
     - block:
         - name: Run bootstrap
@@ -65,6 +65,7 @@
       copy:
         src: "/tmp/nomad_bootstrap_state_info"
         dest: "{{ nomad_bootstrap_state_info_path }}"
+        mode: "0644"
 
     - name: Delete local store
       file:
