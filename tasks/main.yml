@@ -81,6 +81,11 @@
   when:
     - nomad_server | bool
 
+- include_tasks: ./host_volume.yml
+  loop: "{{ nomad_host_volumes }}"
+  when:
+    - nomad_client | bool
+
 - name: configure nomad agent
   ansible.builtin.template:
     src: client.hcl.j2
