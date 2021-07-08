@@ -1,0 +1,11 @@
+- name: Setup nomad volumes
+  block:
+    - name: create volume {{ item['name'] }}
+      file:
+        path: "{{ item['path'] }}"
+        owner: "{{ item['owner'] | default(nomad_user) }}"
+        group: "{{ item['group'] | default(nomad_group) }}"
+        state: directory
+        mode: "{{ item['mode'] | default('0755') }}"
+      notify:
+        - restart nomad

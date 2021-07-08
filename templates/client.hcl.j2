@@ -5,6 +5,13 @@ client {
   node_class = "{{ nomad_node_class }}"
   no_host_uuid = true  
   max_kill_timeout = "30s"
+
+  {% for nomad_host_volume in nomad_host_volumes %}
+    host_volume "{{ nomad_host_volume['name'] }}" {
+        path = "{{ nomad_host_volume['path'] }}"
+        read_only = {{ nomad_host_volume['read_only'] | bool | lower }}
+    }
+  {% endfor %}
 }
 
 plugin "docker" {
