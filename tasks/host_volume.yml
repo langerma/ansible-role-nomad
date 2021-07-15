@@ -1,3 +1,4 @@
+---
 - name: Setup nomad volumes
   block:
     - name: create volume {{ item['name'] }}
