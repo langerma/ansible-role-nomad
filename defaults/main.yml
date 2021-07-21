@@ -14,6 +14,7 @@ nomad_config_path: /etc/nomad.d
 nomad_bootstrap_state_info_path: "{{ nomad_config_path }}/.nomad_bootstrap_info"
 nomad_enable_acl: no
 nomad_host_volumes: []
+nomad_host_networks: []
 
 nomad_server: no
 nomad_client: yes
