@@ -1,0 +1,44 @@
+{{ ansible_managed | comment }}
+
+name = "{{ nomad_name }}"
+region = "{{ nomad_region }}"
+datacenter = "{{ nomad_datacenter }}"
+
+enable_debug = false
+disable_update_check = false
+
+
+bind_addr = "0.0.0.0"
+advertise {
+    http = "{{ nomad_advertise_addr }}:4646"
+    rpc = "{{ nomad_advertise_addr }}:4647"
+    serf = "{{ nomad_advertise_addr }}:4648"
+}
+ports {
+    http = 4646
+    rpc = 4647
+    serf = 4648
+}
+
+telemetry {
+    collection_interval = "1s"
+    disable_hostname = true
+    prometheus_metrics = true
+    publish_allocation_metrics = true
+    publish_node_metrics = true
+}
+
+log_level = "{{ nomad_log_level }}"
+data_dir  = "{{ nomad_data_dir }}"
+enable_syslog = true
+
+leave_on_terminate = true
+leave_on_interrupt = false
+
+{% if nomad_enable_acl is defined and nomad_enable_acl is sameas true %}
+acl {
+    enabled = true
+    token_ttl = "30s"
+    policy_ttl = "30s"
+}
+{% endif %}

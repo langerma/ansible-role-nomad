@@ -6,26 +6,102 @@
   run_once: yes
   delegate_to: localhost
 
-- name: create /etc/nomad.d
+- name: create  nomad_config_path
   ansible.builtin.file:
-    path: /etc/nomad
+    path: "{{ nomad_config_path }}"
     state: directory
     mode: "0750"
     owner: nomad
     group: nomad
 
-- name: configure nomad
+- name: capture unwanted files
+  ansible.builtin.find:
+    paths: "{{ nomad_config_path }}"
+    file_type: file
+    excludes:
+      - base.hcl
+      - client.hcl
+      - server.hcl
+      - nomad.env
+  register: unwanted_files
+
+- name: delete unwanted files
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: absent
+  with_items: "{{ unwanted_files['files'] }}"
+
+- name: delete server config if it is not defined
+  ansible.builtin.file:
+    path: "{{ nomad_config_path }}/server.hcl"
+    state: absent
+  when:
+    - not nomad_server
+  notify:
+    - restart nomad
+
+- name: delete client config if it is not defined
+  ansible.builtin.file:
+    path: "{{ nomad_config_path }}/client.hcl"
+    state: absent
+  when:
+    - not nomad_client
+  notify:
+    - restart nomad
+
+- name: copy nomad environment file
   ansible.builtin.template:
-    src: nomad.hcl.j2
-    dest: /etc/nomad.d/nomad.hcl
+    src: nomad.env.j2
+    dest: "{{ nomad_config_path }}/nomad.env"
     mode: "0640"
     owner: nomad
     group: nomad
   notify:
     - restart nomad
 
+- name: configure genaral nomad options
+  ansible.builtin.template:
+    src: base.hcl.j2
+    dest: "{{ nomad_config_path }}/base.hcl"
+    mode: "0640"
+    owner: nomad
+    group: nomad
+  notify:
+    - restart nomad
+
+- name: configure nomad server
+  ansible.builtin.template:
+    src: server.hcl.j2
+    dest: "{{ nomad_config_path }}/server.hcl"
+    mode: "0640"
+    owner: nomad
+    group: nomad
+  notify:
+    - restart nomad
+  when:
+    - nomad_server | bool
+
+- include_tasks: ./host_volume.yml
+  loop: "{{ nomad_host_volumes }}"
+  when:
+    - nomad_client | bool
+
+- name: configure nomad agent
+  ansible.builtin.template:
+    src: client.hcl.j2
+    dest: "{{ nomad_config_path }}/client.hcl"
+    mode: "0640"
+    owner: nomad
+    group: nomad
+  notify:
+    - restart nomad
+  when:
+    - nomad_client | bool
+
 - name: start nomad
   ansible.builtin.service:
     name: nomad
     state: started
     enabled: yes
+
+- include_tasks: ./acl.yml

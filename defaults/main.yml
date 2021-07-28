@@ -1,17 +1,20 @@
 ---
 # defaults file for nomad
 
-# Configuration items for Nomad
+nomad_region: global
+nomad_datacenter: dc1
+nomad_node_class: worker
 nomad_data_dir: /opt/nomad/data
 nomad_bind_addr: 0.0.0.0
+nomad_advertise_addr: "{{ ansible_default_ipv4.address }}"
 nomad_log_level: INFO
-nomad_datacenter: dc1
-
-# This this to "yes" for an agent.
-nomad_agent: yes
-
-# Set this to "yes" for a server.
-nomad_server: no
-
-# How many servers and agents are expected?
+nomad_name: "{{ inventory_hostname_short }}"
 nomad_server_bootstrap_expect: 1
+nomad_config_path: /etc/nomad.d
+nomad_bootstrap_state_info_path: "{{ nomad_config_path }}/.nomad_bootstrap_info"
+nomad_enable_acl: no
+nomad_host_volumes: []
+nomad_host_networks: []
+
+nomad_server: no
+nomad_client: yes

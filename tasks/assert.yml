@@ -35,6 +35,14 @@
   when:
     - nomad_server | bool
 
+- name: test if nomad_advertise_addr is set correctly
+  ansible.builtin.assert:
+    that:
+      - nomad_advertise_addr is defined
+      - nomad_advertise_addr is string
+    quiet: yes
+  when:
+    - nomad_server | bool
 - name: test if nomad_server_bootstrap_expect is set correctly
   ansible.builtin.assert:
     that:
@@ -56,6 +64,6 @@
 - name: test if nomdad_agent is set correctly
   ansible.builtin.assert:
     that:
-      - nomad_agent is defined
-      - nomad_agent is boolean
+      - nomad_client is defined
+      - nomad_client is boolean
     quiet: yes
