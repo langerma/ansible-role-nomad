@@ -81,6 +81,14 @@
   when:
     - nomad_server | bool
 
+- name: create nomad data directory
+  ansible.builtin.file:
+    path: "{{ nomad_data_dir }}"
+    state: directory
+    mode: '0755'
+    owner: nomad
+    group: nomad
+
 - include_tasks: ./host_volume.yml
   loop: "{{ nomad_host_volumes }}"
   when:
