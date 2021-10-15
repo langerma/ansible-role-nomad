@@ -23,6 +23,7 @@
       - client.hcl
       - server.hcl
       - nomad.env
+      - nomad-consul.hcl
   register: unwanted_files
 
 - name: delete unwanted files

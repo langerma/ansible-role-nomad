@@ -61,9 +61,16 @@
   when:
     - nomad_server | bool
 
-- name: test if nomdad_agent is set correctly
+- name: test if nomad_agent is set correctly
   ansible.builtin.assert:
     that:
       - nomad_client is defined
       - nomad_client is boolean
     quiet: yes
+
+- name: test if nomad_docker_auth_file is set correctly
+  ansible.builtin.assert:
+    that:
+      - nomad_docker_auth_file is defined
+  when:
+    - nomad_docker_auth_enabled | bool
