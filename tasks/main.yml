@@ -124,5 +124,3 @@
     name: nomad
     state: started
     enabled: yes
-
-- include_tasks: ./acl.yml
