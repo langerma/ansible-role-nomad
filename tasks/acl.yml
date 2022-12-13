@@ -26,7 +26,7 @@
     - name: Write ACL bootstrap info locally for use with new servers
       copy:
         content: "{{ nomad_bootstrap_state_info }}"
-        dest: '/tmp/nomad_bootstrap_state_info'
+        dest: 'files/nomad_bootstrap_state_info'
         mode: 0600
       become: false
       vars:
@@ -44,7 +44,7 @@
         - name: Write output locally to share with other nodes
           copy:
             content: "{{ nomad_bootstrap_output.stdout }}"
-            dest: '/tmp/nomad_bootstrap_state_info'
+            dest: 'files/nomad_bootstrap_state_info'
           become: false
           vars:
             ansible_become: false
@@ -52,24 +52,24 @@
 
       run_once: true
       when:
-        - lookup('first_found', dict(files=['/tmp/nomad_bootstrap_state_info'], skip=true)) | ternary(false, true)
+        - lookup('first_found', dict(files=['files/nomad_bootstrap_state_info'], skip=true)) | ternary(false, true)
         - not bootstrap_state.stat.exists | bool
 
     - name: Read bootstrap info for servers that require it
       set_fact:
-        nomad_bootstrap_output: "{{ lookup('file', '/tmp/nomad_bootstrap_state_info') }}"
+        nomad_bootstrap_output: "{{ lookup('file', 'files/nomad_bootstrap_state_info') }}"
       when:
         - nomad_bootstrap_output is not defined
 
     - name: Write to node
       copy:
-        src: "/tmp/nomad_bootstrap_state_info"
+        src: "files/nomad_bootstrap_state_info"
         dest: "{{ nomad_bootstrap_state_info_path }}"
         mode: "0644"
 
     - name: Delete local store
       file:
-        path: '/tmp/nomad_bootstrap_state_info'
+        path: 'files/nomad_bootstrap_state_info'
         state: absent
       become: false
       vars:
